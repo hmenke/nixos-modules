@@ -16,7 +16,13 @@ let
       Content-Transfer-Encoding: 8bit
       Content-Type: text/plain; charset=UTF-8
 
-      $(systemctl status --full "$1")
+      === Current status of unit "$1" ===
+
+      $(${config.systemd.package}/bin/systemctl status --full "$1")
+
+      === Journal of unit "$1" for the current boot ===
+
+      $(${config.systemd.package}/bin/journalctl -b -0 -u "$1")
       ERRMAIL
     '';
 
