@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.systemd.emailNotify;
+  cfg = config.extensions.systemd.emailNotify;
 
   sendmail = pkgs.writeScript "systemd-email-notify"
     ''
@@ -30,7 +30,7 @@ in
 
 {
   options = {
-    systemd.emailNotify = {
+    extensions.systemd.emailNotify = {
       enable = mkOption {
         type = types.bool;
         default = false;

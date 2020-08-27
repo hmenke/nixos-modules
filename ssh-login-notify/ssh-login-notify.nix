@@ -4,7 +4,7 @@ with lib;
 
 let
 
-  cfg = config.services.openssh.loginNotify;
+  cfg = config.extensions.openssh.loginNotify;
 
   sendmail = pkgs.writeScript "ssh-loginNotify"
     ''
@@ -46,7 +46,7 @@ in
   ###### interface
 
   options = {
-    services.openssh.loginNotify = {
+    extensions.openssh.loginNotify = {
       enable = mkOption {
         type = types.bool;
         default = false;
