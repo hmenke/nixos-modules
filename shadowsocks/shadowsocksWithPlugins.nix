@@ -12,6 +12,8 @@ let
     mode = cfg.mode;
     user = "nobody";
     fast_open = cfg.fastOpen;
+  } // optionalAttrs (cfg.nameserver != null) {
+    nameserver = cfg.nameserver;
   } // optionalAttrs (cfg.plugin != null) {
     plugin = cfg.plugin;
     plugin_opts = cfg.pluginOpts;
@@ -92,6 +94,14 @@ in
         default = "chacha20-ietf-poly1305";
         description = ''
           Encryption method. See <link xlink:href="https://github.com/shadowsocks/shadowsocks-org/wiki/AEAD-Ciphers"/>.
+        '';
+      };
+
+      nameserver = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          Name servers for internal DNS resolver
         '';
       };
 
