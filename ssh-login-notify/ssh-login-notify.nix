@@ -6,42 +6,39 @@ let
 
   cfg = config.extensions.openssh.loginNotify;
 
-  sendmail = pkgs.writeScript "ssh-loginNotify"
-    ''
-      #!${pkgs.runtimeShell}
-      
-      # Only notify for login session
-      SESSION_TYPES=(${toString cfg.sessionTypes})
-      if ! printf "%s\n" ''${SESSION_TYPES[@]} | grep -qxF "$PAM_TYPE"; then
-      	exit 0
-      fi
-      
-      # Don't notify for git (too noisy)
-      EXCLUDED_USERS=(${toString cfg.excludeUsers})
-      if printf "%s\n" ''${EXCLUDED_USERS[@]} | grep -qxF "$PAM_USER"; then
-      	exit 0
-      fi
-      
-      ${pkgs.system-sendmail}/bin/sendmail -t <<EOF
-      To: ${cfg.mailTo}
-      From: ${cfg.mailFrom}
-      Subject: SSH login: $PAM_USER from $PAM_RHOST on $(hostname)
-      Content-Type: text/plain; charset="utf-8"
-      
-      User: $PAM_USER
-      Remote Host: $PAM_RHOST
-      Service: $PAM_SERVICE
-      TTY: $PAM_TTY
-      Date: $(date -u)
-      Server: $(uname -a)
-      Environment:
-      $(env)
-      EOF
-    '';
+  sendmail = pkgs.writeScript "ssh-loginNotify" ''
+    #!${pkgs.runtimeShell}
 
-in
+    # Only notify for login session
+    SESSION_TYPES=(${toString cfg.sessionTypes})
+    if ! printf "%s\n" ''${SESSION_TYPES[@]} | grep -qxF "$PAM_TYPE"; then
+    	exit 0
+    fi
 
-{
+    # Don't notify for git (too noisy)
+    EXCLUDED_USERS=(${toString cfg.excludeUsers})
+    if printf "%s\n" ''${EXCLUDED_USERS[@]} | grep -qxF "$PAM_USER"; then
+    	exit 0
+    fi
+
+    ${pkgs.system-sendmail}/bin/sendmail -t <<EOF
+    To: ${cfg.mailTo}
+    From: ${cfg.mailFrom}
+    Subject: SSH login: $PAM_USER from $PAM_RHOST on $(hostname)
+    Content-Type: text/plain; charset="utf-8"
+
+    User: $PAM_USER
+    Remote Host: $PAM_RHOST
+    Service: $PAM_SERVICE
+    TTY: $PAM_TTY
+    Date: $(date -u)
+    Server: $(uname -a)
+    Environment:
+    $(env)
+    EOF
+  '';
+
+in {
 
   ###### interface
 
@@ -56,13 +53,15 @@ in
       mailTo = mkOption {
         type = types.str;
         default = null;
-        description = "Email address to which the login notification will be mailed.";
+        description =
+          "Email address to which the login notification will be mailed.";
       };
 
       mailFrom = mkOption {
         type = types.str;
         default = null;
-        description = "Email address from which the login notification will be mailed.";
+        description =
+          "Email address from which the login notification will be mailed.";
       };
 
       sessionTypes = mkOption {
@@ -73,7 +72,7 @@ in
 
       excludeUsers = mkOption {
         type = types.listOf types.str;
-        default = [];
+        default = [ ];
         description = "Users to exclude from login notification.";
       };
     };
