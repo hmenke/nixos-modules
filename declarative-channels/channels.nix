@@ -7,11 +7,18 @@ let
   cfg = config.extensions.declarative-channels;
 
   fetchChannel = channelConfig:
-    builtins.fetchTarball ({
+    let
       inherit (channelConfig) url;
-    } // (lib.optionalAttrs (channelConfig.sha256 != null) {
       inherit (channelConfig) sha256;
-    }));
+      channelUrl = if hasPrefix "channel:" url then
+        "https://nixos.org/channels/${
+          removePrefix "channel:" url
+        }/nixexprs.tar.xz"
+      else
+        url;
+    in builtins.fetchTarball ({
+      url = channelUrl;
+    } // (lib.optionalAttrs (sha256 != null) { inherit sha256; }));
 
   nixexprs = assert lib.assertMsg (hasAttr "nixos" cfg.channels) ''
     The "nixos" channel is required!
