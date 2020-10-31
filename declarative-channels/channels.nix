@@ -6,18 +6,18 @@ let
 
   cfg = config.extensions.declarative-channels;
 
+  channelUrl = url:
+    if hasPrefix "channel:" url then
+      "https://nixos.org/channels/${removePrefix "channel:" url}"
+    else
+      url;
+
   fetchChannel = channelConfig:
     let
       inherit (channelConfig) url;
       inherit (channelConfig) sha256;
-      channelUrl = if hasPrefix "channel:" url then
-        "https://nixos.org/channels/${
-          removePrefix "channel:" url
-        }/nixexprs.tar.xz"
-      else
-        url;
     in builtins.fetchTarball ({
-      url = channelUrl;
+      url = (channelUrl url) + "/nixexprs.tar.xz";
     } // (lib.optionalAttrs (sha256 != null) { inherit sha256; }));
 
   nixexprs = assert lib.assertMsg (hasAttr "nixos" cfg.channels) ''
@@ -89,6 +89,8 @@ in {
     nixpkgs.pkgs = import "${nixexprs}" {
       inherit (config.nixpkgs) config overlays localSystem crossSystem;
     };
+
+    system.autoUpgrade.channel = channelUrl cfg.channels.nixos.url;
 
     # Unpack channels into /etc/channels
     environment.etc = (mapAttrs' (channelName: channelConfig:
