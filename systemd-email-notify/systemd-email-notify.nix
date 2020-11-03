@@ -11,7 +11,7 @@ let
     ${pkgs.system-sendmail}/bin/sendmail -t <<ERRMAIL
     To: ${cfg.mailTo}
     From: ${cfg.mailFrom}
-    Subject: Status of service $1
+    Subject: [${config.networking.hostName}] Status of service $1
     Content-Transfer-Encoding: 8bit
     Content-Type: text/plain; charset=UTF-8
 

@@ -24,7 +24,7 @@ let
     ${pkgs.system-sendmail}/bin/sendmail -t <<EOF
     To: ${cfg.mailTo}
     From: ${cfg.mailFrom}
-    Subject: SSH login: $PAM_USER from $PAM_RHOST on $(hostname)
+    Subject: [${config.networking.hostName}] SSH login: $PAM_USER from $PAM_RHOST
     Content-Type: text/plain; charset="utf-8"
 
     User: $PAM_USER
