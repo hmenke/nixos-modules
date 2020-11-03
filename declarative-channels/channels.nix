@@ -16,9 +16,9 @@ let
     let
       inherit (channelConfig) url;
       inherit (channelConfig) sha256;
-    in builtins.fetchTarball ({
+    in builtins.trace ''Fetching channel "${url}"'' (builtins.fetchTarball ({
       url = (channelUrl url) + "/nixexprs.tar.xz";
-    } // (lib.optionalAttrs (sha256 != null) { inherit sha256; }));
+    } // (lib.optionalAttrs (sha256 != null) { inherit sha256; })));
 
   nixexprs = assert lib.assertMsg (hasAttr "nixos" cfg.channels) ''
     The "nixos" channel is required!
