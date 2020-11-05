@@ -2,80 +2,26 @@
 
 with lib;
 
-let cfg = config.extensions.wstunnel;
+let
 
-in {
+  cfg = config.extensions.wstunnel;
 
-  ###### interface
-
-  options = {
-
-    extensions.wstunnel = {
-
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-      };
-
-      wsTunnelServer = mkOption { type = types.str; };
-
-      localToRemote = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
-
-      dynamicToRemote = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
-
-      udp = mkOption {
-        type = types.bool;
-        default = false;
-      };
-
-      udpTimeoutSec = mkOption {
-        type = types.nullOr types.int;
-        default = null;
-      };
-
-      httpProxy = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
-
-      soMark = mkOption {
-        type = types.nullOr types.int;
-        default = null;
-      };
-
-      upgradePathPrefix = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
-
-      server = mkOption {
-        type = types.bool;
-        default = false;
-      };
-
-      restrictTo = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
-    };
-
-  };
-
-  ###### implementation
-
-  config = mkIf cfg.enable {
-    systemd.services.wstunnel = {
-      description = "wstunnel";
+  generateInterfaceUnit = name: value:
+    nameValuePair "wstunnel-${name}" {
+      description = "wstunnel - ${name}";
+      before = let
+        wg-quick = map (iface: "wg-quick-${iface}.service")
+          (attrNames config.networking.wg-quick.interfaces);
+        wireguard = optionals config.networking.wireguard.enable
+          (map (iface: "wireguard-${iface}.service")
+            (attrNames config.networking.wireguard.interfaces));
+      in wg-quick ++ wireguard;
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
       path = [ pkgs.wstunnel ];
       serviceConfig = {
+        Restart = "always";
+        RestartSec = "1s";
         # User
         DynamicUser = true;
         # Capabilities
@@ -105,12 +51,12 @@ in {
       };
       script = let
         option = key:
-          let value = getAttr key cfg;
-          in if value == null then "" else "--${key}=${toString value}";
+          let cmd = getAttr key value;
+          in if cmd == null then "" else "--${key}=${toString cmd}";
       in ''
         exec wstunnel --verbose \
-          ${if cfg.udp then "--udp" else ""} \
-          ${if cfg.server then "--server" else ""} \
+          ${if value.udp then "--udp" else ""} \
+          ${if value.server then "--server" else ""} \
           ${option "localToRemote"} \
           ${option "dynamicToRemote"} \
           ${option "udpTimeoutSec"} \
@@ -118,8 +64,82 @@ in {
           ${option "soMark"} \
           ${option "upgradePathPrefix"} \
           ${option "restrictTo"} \
-          ${cfg.wsTunnelServer}
+          ${value.wsTunnelServer}
       '';
     };
+
+in {
+
+  ###### interface
+
+  options = {
+
+    extensions.wstunnel = {
+
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+      };
+
+      interfaces = mkOption {
+        type = types.attrsOf (types.submodule ({ ... }: {
+          options = {
+            wsTunnelServer = mkOption { type = types.str; };
+
+            localToRemote = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+            };
+
+            dynamicToRemote = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+            };
+
+            udp = mkOption {
+              type = types.bool;
+              default = false;
+            };
+
+            udpTimeoutSec = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+            };
+
+            httpProxy = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+            };
+
+            soMark = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+            };
+
+            upgradePathPrefix = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+            };
+
+            server = mkOption {
+              type = types.bool;
+              default = false;
+            };
+
+            restrictTo = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+            };
+          };
+        }));
+      };
+
+    };
+  };
+
+  ###### implementation
+
+  config = mkIf cfg.enable {
+    systemd.services = (mapAttrs' generateInterfaceUnit cfg.interfaces);
   };
 }
