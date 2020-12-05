@@ -12,18 +12,19 @@ let
     else
       url;
 
-  fetchChannel = channelConfig:
+  fetchChannel = channelName: channelConfig:
     let
       inherit (channelConfig) url;
       inherit (channelConfig) sha256;
     in builtins.trace ''Fetching channel "${url}"'' (builtins.fetchTarball ({
+      name = channelName;
       url = (channelUrl url) + "/nixexprs.tar.xz";
     } // (lib.optionalAttrs (sha256 != null) { inherit sha256; })));
 
   nixexprs = assert lib.assertMsg (hasAttr "nixos" cfg.channels) ''
     The "nixos" channel is required!
   '';
-    fetchChannel (cfg.channels.nixos);
+    fetchChannel "nixos" (cfg.channels.nixos);
 
 in {
   options = {
@@ -95,7 +96,7 @@ in {
     # Unpack channels into /etc/channels
     environment.etc = (mapAttrs' (channelName: channelConfig:
       nameValuePair ("channels/${channelName}") ({
-        source = fetchChannel channelConfig;
+        source = fetchChannel channelName channelConfig;
       })) cfg.channels) // {
 
         # Just a little goody for myself
