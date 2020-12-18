@@ -21,9 +21,13 @@ in {
         type = types.int;
         default = 8443;
       };
-      order = mkOption {
-        type = types.listOf types.str;
-        default = attrNames cfg.streams;
+      mapHashBucketSize = mkOption {
+        type = types.nullOr (types.enum [ 32 64 128 ]);
+        default = null;
+      };
+      mapHashMaxSize = mkOption {
+        type = types.nullOr types.ints.positive;
+        default = null;
       };
       streams = mkOption {
         type = types.attrsOf (types.submodule {
@@ -48,8 +52,8 @@ in {
         config = mkIf cfg.enable {
           forceSSL = true;
           listen = [
-            { addr = "0.0.0.0"; port = cfg.sslPort; ssl = true; }
-            { addr = "[::]"; port = cfg.sslPort; ssl = true; }
+            { addr = "0.0.0.0"; port = cfg.sslPort; ssl = true; extraParameters = [ "proxy_protocol"]; }
+            { addr = "[::]"; port = cfg.sslPort; ssl = true; extraParameters = [ "proxy_protocol"]; }
             { addr = "0.0.0.0"; port = 80; ssl = false; }
             { addr = "[::]"; port = 80; ssl = false; }
           ];
@@ -62,53 +66,51 @@ in {
 
   config = let
 
-    mapAttrsToListInOrder = f: attrs: order:
-      map (name: f name attrs.${name}) order;
-
-    mapStreamsToListInOrder = f: attrs:
-      mapAttrsToListInOrder f attrs cfg.order;
-
     quoteOrDefault = s: if s == "default" then s else "\"${s}\"";
 
   in mkIf cfg.enable {
-    assertions = [ {
-      assertion = naturalSort cfg.order == naturalSort (attrNames cfg.streams);
-      message = "The requested order is not exhaustive";
-    } ];
 
     services.nginx.appendConfig = let
-      upstreams = concatStringsSep "\n" (mapStreamsToListInOrder (name: value: ''
+      upstreams = concatStringsSep "\n" (mapAttrsToList (name: value: ''
         upstream ${name} {
           server ${value.server}:${toString value.port};
         }
       '') cfg.streams);
 
       mapProtocols = let
-        streams = filterAttrs (n: v: v.ssl_preread_protocol != null) cfg.streams;
-        mappings = concatStringsSep "\n" (mapStreamsToListInOrder (name: value:
+        streams = filterAttrs (n: v: v.ssl_preread_protocol != []) cfg.streams;
+        mappings = mapAttrsToList (name: value:
 	  concatMapStringsSep "\n" (protocol: ''
             ${quoteOrDefault protocol} ${name};
-          '') value.ssl_preread_protocol) streams);
-      in ''
+          '') value.ssl_preread_protocol) streams;
+      in optionalString (mappings != []) ''
         map $ssl_preread_protocol $upstream {
-          ${mappings}
+          ${concatStringsSep "\n" mappings}
         }
       '';
 
       mapAlpnProtocols = let
-        streams = filterAttrs (n: v: v.ssl_preread_alpn_protocols != null) cfg.streams;
-        mappings = concatStringsSep "\n" (mapStreamsToListInOrder (name: value:
+        streams = filterAttrs (n: v: v.ssl_preread_alpn_protocols != []) cfg.streams;
+        mappings = mapAttrsToList (name: value:
 	  concatMapStringsSep "\n" (protocol: ''
             ${quoteOrDefault protocol} ${name};
-          '') value.ssl_preread_alpn_protocols) streams);
-      in ''
+          '') value.ssl_preread_alpn_protocols) streams;
+      in optionalString (mappings != []) ''
         map $ssl_preread_alpn_protocols $upstream {
-          ${mappings}
+          ${concatStringsSep "\n" mappings}
         }
       '';
     in ''
       stream {
         ${upstreams}
+
+        ${optionalString (cfg.mapHashBucketSize != null) ''
+          map_hash_bucket_size ${toString cfg.mapHashBucketSize};
+        ''}
+
+        ${optionalString (cfg.mapHashMaxSize != null) ''
+          map_hash_max_size ${toString cfg.mapHashMaxSize};
+        ''}
 
         ${mapAlpnProtocols}
 
@@ -117,9 +119,11 @@ in {
         server {
           listen ${toString cfg.port};
           proxy_pass $upstream;
+	  proxy_protocol on;
           ssl_preread on;
         }
       }
     '';
+
   };
 }
