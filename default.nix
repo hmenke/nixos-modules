@@ -2,6 +2,7 @@
   imports = [
     ./adblock/module.nix
     ./declarative-channels/module.nix
+    ./deployment/module.nix
     ./nginx-stream-ssl-preread/module.nix
     ./ssh-login-notify/module.nix
     ./systemd-boot/systemd-boot.nix

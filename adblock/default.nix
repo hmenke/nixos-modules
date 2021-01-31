@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   pname = "adaway";
-  version = "3.2.5";
+  version = "3.3.9";
 
   src = fetchFromGitHub {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "1infvd68pxn9v719vz2cqdzvrlh7md109nky1yi732mw5mbcm3h1";
+    sha256 = "sha256-rx4vYuX9y7QyHp+gVgS0ixYwBg/gUz3Zp0ULRC7LnLY=";
   };
 
   installPhase = ''
