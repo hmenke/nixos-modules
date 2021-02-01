@@ -80,7 +80,7 @@ in {
       mapProtocols = let
         streams = filterAttrs (n: v: v.ssl_preread_protocol != []) cfg.streams;
         mappings = mapAttrsToList (name: value:
-	  concatMapStringsSep "\n" (protocol: ''
+          concatMapStringsSep "\n" (protocol: ''
             ${quoteOrDefault protocol} ${name};
           '') value.ssl_preread_protocol) streams;
       in optionalString (mappings != []) ''
@@ -92,7 +92,7 @@ in {
       mapAlpnProtocols = let
         streams = filterAttrs (n: v: v.ssl_preread_alpn_protocols != []) cfg.streams;
         mappings = mapAttrsToList (name: value:
-	  concatMapStringsSep "\n" (protocol: ''
+          concatMapStringsSep "\n" (protocol: ''
             ${quoteOrDefault protocol} ${name};
           '') value.ssl_preread_alpn_protocols) streams;
       in optionalString (mappings != []) ''
@@ -119,7 +119,7 @@ in {
         server {
           listen ${toString cfg.port};
           proxy_pass $upstream;
-	  proxy_protocol on;
+          proxy_protocol on;
           ssl_preread on;
         }
       }

@@ -35,6 +35,9 @@ in {
     hosts = pkgs.adblock.override { inherit (cfg) alternative; };
 
   in {
+    nixpkgs.overlays = [ (final: prev: {
+      adblock = final.callPackage ./default.nix { };
+    }) ];
 
     networking.hostFiles = [ "${hosts}/etc/hosts" ];
 

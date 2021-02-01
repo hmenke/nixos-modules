@@ -47,8 +47,8 @@ with lib;
 
       controlOpts = concatStringsSep " " [
         "-o ControlMaster=auto"
-	"-o ControlPath=\"$tmpDir/ssh-master\""
-	"-o ControlPersist=60"
+        "-o ControlPath=\"$tmpDir/ssh-master\""
+        "-o ControlPersist=60"
       ];
 
       makeScpCmd = { path, source, ... }: ''
