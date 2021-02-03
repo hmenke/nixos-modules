@@ -2,9 +2,9 @@
 
 buildGoModule rec {
   pname = "drone-runner-docker";
-  version = "1.6.1";
+  version = "1.6.3";
 
-  vendorSha256 = "15lpdliqz129yq5zgzjvndwdxngxa96g0ska4zkny7ycb3vwq0xm";
+  vendorSha256 = "sha256-tQPM91jMH2/nJ2pq8ExS/dneeLNb/vcL9kmEjyNtl5Y=";
 
   doCheck = false;
 
