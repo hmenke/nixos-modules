@@ -9,6 +9,7 @@
       };
       user = final: prev: {
         gnuplot-git = final.callPackage ./gnuplot-git { };
+        splatmoji = final.callPackage ./splatmoji { };
       };
     };
 
