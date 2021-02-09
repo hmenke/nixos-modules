@@ -15,6 +15,7 @@
         gnuplot-git = final.callPackage ./gnuplot-git { };
         masterpdfeditor-free = final.callPackage ./masterpdfeditor-free { };
         mathematica-firejail = final.callPackage ./mathematica-firejail { };
+        nix-direnv = prev.nix-direnv.override { nix = final.nixFlakes; };
         splatmoji = final.callPackage ./splatmoji { };
       };
     };
