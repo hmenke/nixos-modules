@@ -10,6 +10,7 @@
       user = final: prev: {
         gitAndTools = prev.gitAndTools // {
           diff-highlight = final.callPackage ./diff-highlight { };
+          pass-git-helper = final.python3Packages.callPackage ./pass-git-helper { };
         };
         gnuplot-git = final.callPackage ./gnuplot-git { };
         masterpdfeditor-free = final.callPackage ./masterpdfeditor-free { };
