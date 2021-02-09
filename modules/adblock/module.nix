@@ -36,7 +36,7 @@ in {
 
   in {
     nixpkgs.overlays = [ (final: prev: {
-      adblock = final.callPackage ./default.nix { };
+      adblock = final.callPackage ../../pkgs/adblock/default.nix { };
     }) ];
 
     networking.hostFiles = [ "${hosts}/etc/hosts" ];
