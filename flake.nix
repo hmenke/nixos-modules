@@ -7,6 +7,9 @@
         adblock = final.callPackage ./adblock { };
         drone-runner-docker = final.callPackage ./drone-runner-docker { };
       };
+      user = final: prev: {
+        gnuplot-git = final.callPackage ./gnuplot-git { };
+      };
     };
 
     nixosModules = {
