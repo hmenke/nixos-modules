@@ -14,6 +14,7 @@
         };
         gnuplot-git = final.callPackage ./gnuplot-git { };
         masterpdfeditor-free = final.callPackage ./masterpdfeditor-free { };
+        mathematica-firejail = final.callPackage ./mathematica-firejail { };
         splatmoji = final.callPackage ./splatmoji { };
       };
     };
