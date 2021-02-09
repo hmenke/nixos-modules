@@ -8,6 +8,9 @@
         drone-runner-docker = final.callPackage ./drone-runner-docker { };
       };
       user = final: prev: {
+        gitAndTools = prev.gitAndTools // {
+          diff-highlight = final.callPackage ./diff-highlight { };
+        };
         gnuplot-git = final.callPackage ./gnuplot-git { };
         masterpdfeditor-free = final.callPackage ./masterpdfeditor-free { };
         splatmoji = final.callPackage ./splatmoji { };
