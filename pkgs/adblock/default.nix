@@ -1,14 +1,16 @@
 { stdenv, lib, fetchFromGitHub, alternative ? "hosts" }:
 
 stdenv.mkDerivation rec {
-  pname = "adaway";
-  version = "3.3.11";
+  pname = "adblock";
+  version = "3.4.0";
+
+  phases = [ "unpackPhase" "installPhase" ];
 
   src = fetchFromGitHub {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-XajKuzH3XilXGufzflIMjL3ooAN/BGt7MnmhW7c7608=";
+    sha256 = "sha256-06vfE9wcvxqbseyMLrud5mYtS7HuqAN4LnAVkXEupNU=";
   };
 
   installPhase = ''
