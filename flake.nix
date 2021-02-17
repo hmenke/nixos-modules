@@ -3,8 +3,8 @@
 
   outputs = { self, ... }: {
     overlays = {
-      system = import ./overlays/system;
-      user = import ./overlay/user;
+      system = import ./overlays/system.nix;
+      user = import ./overlays/user.nix;
     };
 
     nixosModules = {
