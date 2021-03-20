@@ -12,7 +12,7 @@ final: prev: {
     officeVersion = {
       version = "976";
       edition = "2018";
-      sha256 = "sha256:14qnlbczq1zcz24vwy2yprdvhyn6bxv1nc1w6vjyq8w5jlwqsgbr";
+      sha256 = "sha256-A45q/irWxKTLszyd7Rv56WeqkwHtWg4zY9YVxqA/KmQ=";
     };
   };
   splatmoji = final.callPackage ../pkgs/splatmoji { };
