@@ -12,7 +12,7 @@ buildGoModule rec {
     owner = "drone-runners";
     repo = pname;
     rev = "v${version}";
-    sha256 = "1ca4gyiqwpgf55ibyl87wl3kim1yqmagkdaw12dknrk5nzcsxv8n";
+    sha256 = "sha256-WI3pr0t6EevIBOQwCAI+CY2O8Q7+W/CLDT/5Y0+tduQ=";
   };
 
   meta = with stdenv.lib; {
