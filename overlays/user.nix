@@ -1,9 +1,7 @@
 final: prev: {
   gitAndTools = prev.gitAndTools // {
-    diff-highlight = final.callPackage ../pkgs/diff-highlight { };
     pass-git-helper = final.python3Packages.callPackage ../pkgs/pass-git-helper { };
   };
-  gnuplot-git = final.callPackage ../pkgs/gnuplot-git { };
   masterpdfeditor-free = final.callPackage ../pkgs/masterpdfeditor-free { };
   mathematica-firejail = final.callPackage ../pkgs/mathematica-firejail { };
   nix-direnv = prev.nix-direnv.override { nix = final.nixFlakes; };
