@@ -1,0 +1,61 @@
+name: "cache"
+on:
+  push:
+  pull_request:
+  schedule:
+  - cron: "0 0 * * *"
+
+jobs:
+  nix-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - name: nixos-20.09 (Linux)
+          channel: nixos-20.09
+          os: ubuntu-latest
+    name: nix-build
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: cachix/install-nix-action@v12
+    - uses: cachix/cachix-action@v8
+      with:
+        name: hmenke
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - name: Run nix-build
+      run: |
+        rev="$(git ls-remote https://github.com/NixOS/nixpkgs refs/heads/$channel | awk '{print $1}')"
+        nixpkgs="fetchTarball \"https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz\""
+        cat <<'EOF' | nix-build -E - \
+            --show-trace \
+            --option allow-import-from-derivation false \
+            ${channel:+--arg pkgs "import ($nixpkgs) {}"}
+        { pkgs ? import <nixpkgs> { }
+        }:
+        
+        with pkgs.appendOverlays [
+          (import ./overlays/system.nix)
+          (import ./overlays/user.nix)
+        ];
+        
+        recurseIntoAttrs {
+          inherit adblock;
+          inherit drone-runner-docker;
+          inherit libfprint-tod;
+          inherit libfprint-tod-goodix;
+          inherit (gitAndTools) pass-git-helper;
+          inherit splatmoji;
+          singularity = singularity.overrideAttrs (attrs : {
+            installPhase = attrs.installPhase + ''
+              mv $out/libexec/singularity/bin/starter-suid $out/libexec/singularity/bin/starter-suid.orig
+              ln -s /run/wrappers/bin/singularity-suid $out/libexec/singularity/bin/starter-suid
+            '';
+          });
+        }
+        EOF
+      env:
+        NIXPKGS_ALLOW_UNFREE: 1
+        channel: '${{ matrix.channel }}'
