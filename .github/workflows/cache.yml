@@ -47,6 +47,7 @@ jobs:
           inherit libfprint-tod;
           inherit libfprint-tod-goodix;
           inherit (gitAndTools) pass-git-helper;
+          inherit pop-os-shell;
           inherit splatmoji;
           singularity = singularity.overrideAttrs (attrs : {
             installPhase = attrs.installPhase + ''

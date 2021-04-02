@@ -6,6 +6,7 @@ final: prev: {
   mathematica-firejail = final.callPackage ../pkgs/mathematica-firejail { };
   nix-direnv = prev.nix-direnv.override { nix = final.nixFlakes; };
   nixos-shell = prev.nixos-shell.override { nix = final.nixFlakes; };
+  pop-os-shell = final.callPackage ../pkgs/pop-os-shell { };
   softmaker-office = prev.softmaker-office.override {
     officeVersion = {
       version = "976";
