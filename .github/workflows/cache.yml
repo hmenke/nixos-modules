@@ -20,11 +20,12 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - uses: cachix/install-nix-action@v12
-    - uses: cachix/cachix-action@v8
+    - uses: cachix/install-nix-action@v13
+    - uses: cachix/cachix-action@v9
       with:
         name: hmenke
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+        pushFilter: "(-source$|nixpkgs.tar.gz$)"
     - name: Run nix-build
       run: |
         rev="$(git ls-remote https://github.com/NixOS/nixpkgs refs/heads/$channel | awk '{print $1}')"
