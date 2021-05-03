@@ -16,6 +16,7 @@ final: prev: {
     };
   };
   splatmoji = final.callPackage ../pkgs/splatmoji { };
+  texlive-env = final.callPackage ../pkgs/texlive-env { };
   zoom-us-xcb = final.symlinkJoin {
     name = "zoom-us-xcb";
     paths = [ final.zoom-us ];
