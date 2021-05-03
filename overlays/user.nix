@@ -4,7 +4,7 @@ final: prev: {
     pass-git-helper = final.python3Packages.callPackage ../pkgs/pass-git-helper { };
   };
   masterpdfeditor-free = final.callPackage ../pkgs/masterpdfeditor-free { };
-  mathematica-firejail = final.callPackage ../pkgs/mathematica-firejail { };
+  mathematica-env = final.callPackage ../pkgs/mathematica-env { };
   nix-direnv = prev.nix-direnv.override { nix = final.nixFlakes; };
   nixos-shell = prev.nixos-shell.override { nix = final.nixFlakes; };
   pop-os-shell = final.callPackage ../pkgs/pop-os-shell { };
