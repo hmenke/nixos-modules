@@ -45,6 +45,7 @@ jobs:
         recurseIntoAttrs {
           inherit adblock;
           inherit drone-runner-docker;
+          inherit emacsPgtkGcc;
           inherit libfprint-tod;
           inherit libfprint-tod-goodix;
           inherit (gitAndTools) pass-git-helper;
