@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation rec {
   pname = "adblock";
-  version = "3.6.0";
+  version = "3.7.0";
 
   phases = [ "unpackPhase" "installPhase" ];
 
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-3MIlZsHftADRTXAoXeh5t6yINnheDuckYIXYqeA3xg0=";
+    sha256 = "sha256-UmEuD3p302pICEZT6zH7n9dIC2UZjaqyhpXSjKfMYn4=";
   };
 
   installPhase = ''
