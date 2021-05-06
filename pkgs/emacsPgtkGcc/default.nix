@@ -1,6 +1,7 @@
 { lib
 , fetchFromSavannah
 , fetchpatch
+, binutils
 , emacs
 }:
 let
@@ -11,7 +12,7 @@ in
 (emacs.override {
   nativeComp = true;
   srcRepo = true;
-}).overrideAttrs ({ configureFlags, postPatch, ... }: {
+}).overrideAttrs ({ configureFlags ? [], postPatch ? "", postInstall ? "", ... }: {
   name = "emacs-pgtkgcc-${repoMeta.version}";
   inherit (repoMeta) version;
   src = fetchFromSavannah {
@@ -28,5 +29,9 @@ in
     substituteInPlace lisp/loadup.el \
     --replace '(emacs-repository-get-version)' '"${repoMeta.rev}"' \
     --replace '(emacs-repository-get-branch)' '"master"'
+  '';
+
+  postInstall = postInstall + ''
+    gappsWrapperArgs+=(--prefix PATH : "${binutils}/bin")
   '';
 })
