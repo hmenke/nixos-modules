@@ -1,5 +1,4 @@
 final: prev: {
-  emacsPgtkGcc = final.callPackage ../pkgs/emacsPgtkGcc { };
   gitAndTools = prev.gitAndTools // {
     pass-git-helper = final.python3Packages.callPackage ../pkgs/pass-git-helper { };
   };
