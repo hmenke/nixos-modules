@@ -1,13 +1,21 @@
-{ stdenv, fetchFromGitHub, nodePackages, glib, substituteAll, gjs }:
-
+{ stdenv
+, fetchFromGitHub
+, nodePackages
+, glib
+, substituteAll
+, gjs
+}:
+let
+  rev = "9507dc38f75f56e657cf071d5f8dc578c5dc9352";
+in
 stdenv.mkDerivation rec {
   pname = "pop-os-shell";
-  version = "1.2.0";
+  version = "1.3.0+git20210507.${builtins.substring 0 7 rev}";
 
   src = fetchFromGitHub {
     owner = "pop-os";
     repo = "shell";
-    rev = version;
+    inherit rev;
     sha256 = "sha256-igggV9qPyck34DmtGGeeVtFODp8NP19Llw8zMm22Qa0=";
   };
 
