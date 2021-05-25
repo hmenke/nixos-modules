@@ -7,7 +7,7 @@ let
 
   efi = config.boot.loader.efi;
 
-  gummibootBuilder = pkgs.substituteAll {
+  systemdBootBuilder = pkgs.substituteAll {
     src = ./systemd-boot-builder.py;
 
     isExecutable = true;
@@ -37,6 +37,17 @@ let
     signingCertificate =
       if cfg.signed then cfg.signing-certificate else "/no-signing-crt";
   };
+
+  checkedSystemdBootBuilder = pkgs.runCommand "systemd-boot" {
+    nativeBuildInputs = [ pkgs.mypy ];
+  } ''
+    install -m755 ${systemdBootBuilder} $out
+    mypy \
+      --no-implicit-optional \
+      --disallow-untyped-calls \
+      --disallow-untyped-defs \
+      $out
+  '';
 in {
   disabledModules = [ "system/boot/loader/systemd-boot/systemd-boot.nix" ];
 
@@ -173,7 +184,7 @@ in {
     boot.loader.supportsInitrdSecrets = true;
 
     system = {
-      build.installBootLoader = gummibootBuilder;
+      build.installBootLoader = checkedSystemdBootBuilder;
 
       boot.loader.id = "systemd-boot";
 

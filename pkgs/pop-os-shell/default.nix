@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
     owner = "pop-os";
     repo = "shell";
     inherit rev;
-    sha256 = "sha256-igggV9qPyck34DmtGGeeVtFODp8NP19Llw8zMm22Qa0=";
+    sha256 = "sha256-9Z1SDg9TWdk5W22FkGYGQW1iMdS+T+hUpzZMW7whKZg=";
   };
 
   nativeBuildInputs = [ glib nodePackages.typescript gjs ];

@@ -41,9 +41,7 @@ in {
 
     networking.hostFiles = [ "${hosts}/etc/hosts" ];
 
-    services.unbound.extraConfig = ''
-      include: ${hosts}/etc/unbound/adblock.conf
-    '';
+    services.unbound.settings.server.include = "${hosts}/etc/unbound/adblock.conf";
 
   });
 
