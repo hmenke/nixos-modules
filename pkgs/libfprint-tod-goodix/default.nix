@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , fetchgit 
 , libfprint-tod
 , autoPatchelfHook
@@ -34,11 +35,11 @@ stdenv.mkDerivation rec {
     install -Dm 0644 lib/udev/rules.d/60-libfprint-2-tod1-goodix.rules "$out/lib/udev/rules.d/"
   '';
 
-  meta = with stdenv.lib; {
+  meta = {
     homepage = "https://git.launchpad.net/~oem-solutions-engineers/libfprint-2-tod1-goodix/+git/libfprint-2-tod1-goodix";
     description = "Goodix driver module for libfprint-2 Touch OEM Driver";
-    license = licenses.unfreeRedistributable;
-    platforms = platforms.linux;
-    maintainers = with maintainers; [ jobojeha hmenke ];
+    license = lib.licenses.unfreeRedistributable;
+    platforms = lib.platforms.linux;
+    maintainers = with lib.maintainers; [ jobojeha hmenke ];
   };
 }

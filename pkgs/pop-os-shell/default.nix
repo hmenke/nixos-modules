@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , fetchFromGitHub
 , nodePackages
 , glib
@@ -38,11 +39,11 @@ stdenv.mkDerivation rec {
     chmod +x $out/share/gnome-shell/extensions/pop-shell@system76.com/color_dialog/main.js
   '';
 
-   meta = with stdenv.lib; {
+   meta = {
     description = "Keyboard-driven layer for GNOME Shell";
-    license = licenses.gpl3Only;
+    license = lib.licenses.gpl3Only;
     homepage = "https://github.com/pop-os/shell";
-    platforms = platforms.linux;
-    maintainers = with maintainers; [ hmenke remunds ];
+    platforms = lib.platforms.linux;
+    maintainers = with lib.maintainers; [ hmenke remunds ];
   };
 }

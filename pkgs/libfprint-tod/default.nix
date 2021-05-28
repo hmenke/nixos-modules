@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , pkgs
 , fetchFromGitLab
 , fetchurl
@@ -72,11 +73,11 @@ stdenv.mkDerivation rec {
   '';
 
 
-  meta = with stdenv.lib; {
+  meta = {
     homepage = "https://fprint.freedesktop.org/";
     description = "A library designed to make it easy to add support for consumer fingerprint readers";
-    license = licenses.lgpl21;
-    platforms = platforms.linux;
-    maintainers = with maintainers; [ jobojeha hmenke ];
+    license = lib.licenses.lgpl21;
+    platforms = lib.platforms.linux;
+    maintainers = with lib.maintainers; [ jobojeha hmenke ];
   };
 }
