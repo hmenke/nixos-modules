@@ -2,19 +2,20 @@
 
 stdenv.mkDerivation rec {
   pname = "adblock";
-  version = "3.7.6";
+  version = "3.7.8";
 
   src = fetchFromGitHub {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-zjUdHzsjv16PHXfxTuVC6aNKfh+73dH1AABvq1MArXI=";
+    sha256 = "sha256-z+AkjWmqP4ASnpIAG/OyZC4W5xU5YOeFTsmdkLvPixQ=";
   };
 
   installPhase = ''
-    mkdir -p $out/etc/unbound
+    mkdir -p $out/etc $out/etc/unbound $out/etc/kresd
     cp ${alternative} $out/etc/hosts
-    grep '^0\.0\.0\.0' ${alternative} | awk '{ print "local-zone: \"" $2 "\" always_nxdomain" }' > $out/etc/unbound/adblock.conf
+    awk '/^0\.0\.0\.0/ { print "local-zone: \"" $2 "\" always_nxdomain" }' ${alternative} > $out/etc/unbound/adblock.conf
+    awk '/^0\.0\.0\.0/ { print $2 "\tCNAME\t." }' ${alternative} > $out/etc/kresd/adblock.rpz
   '';
 
   meta = {
