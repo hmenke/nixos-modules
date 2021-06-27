@@ -47,24 +47,29 @@ with lib;
 
       controlOpts = concatStringsSep " " [
         "-o ControlMaster=auto"
-        "-o ControlPath=\"$tmpDir/ssh-master\""
+        "-o ControlPath=$tmpDir/ssh-master"
         "-o ControlPersist=60"
       ];
 
       makeScpCmd = { path, source, ... }: ''
         echo "${source} -> ${targetHost}:${path}"
-        scp ${controlOpts} -P ${toString targetPort} "${source}" root@${targetHost}:"${path}"
+        rsync -rP --rsh="ssh ${controlOpts}" --port=${toString targetPort} --chown=root:keys --chmod=D0750,F0640 "${source}" root@${targetHost}:"${path}"
       '';
 
       paths = mapAttrsToList (_: key: makeScpCmd key) keys;
     in ''
       tmpDir=$(mktemp -d -p /dev/shm -t copy-keys.XXXXXX)
-      ssh -x -M -N -f ${controlOpts} -p ${toString targetPort} root@${targetHost}
+      if ! ssh -x -M -N -f ${controlOpts} -p ${toString targetPort} root@${targetHost}; then
+          echo "Connection failed"
+          exit 1
+      fi
+
       cleanup() {
           ssh -x ${controlOpts} -O exit dummyhost 2>/dev/null || true
           rm -rf "$tmpDir"
       }
       trap cleanup EXIT
+
       ${concatStringsSep "\n" paths}
     '';
   };
