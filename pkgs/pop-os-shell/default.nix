@@ -7,7 +7,7 @@
 , gjs
 }:
 let
-  rev = "47d48291dfaed86b43011871b07b91d01aa0d2f6";
+  rev = "976106e564acafcb3fad2a12a7d16f2c01e1f1ce";
 in
 stdenv.mkDerivation rec {
   pname = "pop-os-shell";
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
     owner = "pop-os";
     repo = "shell";
     inherit rev;
-    sha256 = "sha256-IjZ09ykWH+ylmOkOeooE1Ec50f332F4ZK9KJA5oycTA=";
+    sha256 = "sha256-pCu3O5TKwywGZFoQk4GQqEGxETqFJgf7ZgBPVQD6oCs=";
   };
 
   nativeBuildInputs = [ glib nodePackages.typescript gjs ];
