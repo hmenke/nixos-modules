@@ -2,6 +2,11 @@
 , lib
 , fetchFromGitHub
 , fetchpatch
+, coreutils
+, gawk
+, getopt
+, gnugrep
+, zfs
 }:
 
 stdenvNoCC.mkDerivation rec {
@@ -15,12 +20,18 @@ stdenvNoCC.mkDerivation rec {
     sha256 = "sha256-2O1NjFelumZCfk3wk7OHh5bM7hlh8eTaL3ZRXODhnVQ=";
   };
 
+  buildInputs = [ coreutils gawk getopt gnugrep zfs ];
+
   makeFlags = [
     "DESTDIR=$(out)"
     "PREFIX="
   ];
 
   dontBuild = true;
+
+  postFixup = ''
+    sed -i '2 i export PATH="${lib.makeBinPath buildInputs}\''${PATH:+:\$PATH}"' $out/bin/zfs-auto-snapshot
+  '';
 
   meta = {
     description = "ZFS Automatic Snapshot Service for Linux";

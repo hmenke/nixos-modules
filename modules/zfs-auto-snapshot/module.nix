@@ -73,7 +73,6 @@ in {
         value = {
           description = "zfs-auto-snapshot ${snapName}";
           after = [ "zfs-import.target" ];
-          path = [ pkgs.gawk pkgs.getopt pkgs.zfs ];
           serviceConfig = {
             Type = "oneshot";
             ExecStart = [
