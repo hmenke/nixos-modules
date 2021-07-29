@@ -65,7 +65,6 @@ in {
     environment.systemPackages = [ pkgs.zfs-auto-snapshot ];
 
     systemd.services = let
-      zfs-auto-snapshot = "${pkgs.zfs-auto-snapshot}/bin/zfs-auto-snapshot";
       keep = name: toString (builtins.getAttr name cfg);
     in builtins.listToAttrs (map (snapName:
       {
@@ -73,13 +72,18 @@ in {
         value = {
           description = "zfs-auto-snapshot ${snapName}";
           after = [ "zfs-import.target" ];
-          serviceConfig = {
-            Type = "oneshot";
-            ExecStart = [
-              "${zfs-auto-snapshot} ${cfg.flags} --default-exclude --label=${snapName} --keep=${keep snapName} '//'"
-              "${zfs-auto-snapshot} ${cfg.flags} --destroy-only --label=${snapName} --keep=${keep snapName} '//'"
-            ];
-          };
+          path = [ pkgs.zfs-auto-snapshot pkgs.zfs ];
+          script = ''
+            zfs-auto-snapshot ${cfg.flags} --default-exclude --label=${snapName} --keep=${keep snapName} '//'
+
+            # Prune old snapshots with the same label from all datasets
+            zfs list -H -t filesystem,volume -o name | while read -r volume; do
+                zfs list -H -t snapshot -S creation -o name "$volume" |
+                    grep -F "@zfs-auto-snap_${snapName}" |
+                    tail -n "+$((${keep snapName} + 1))" |
+                    xargs -r -l zfs destroy -d -v
+            done
+          '';
           restartIfChanged = false;
         };
       }) snapshotNames);
