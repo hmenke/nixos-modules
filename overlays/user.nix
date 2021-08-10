@@ -13,18 +13,4 @@ final: prev: {
   };
   splatmoji = final.callPackage ../pkgs/splatmoji { };
   texlive-env = final.callPackage ../pkgs/texlive-env { };
-  zoom-us-xcb = final.symlinkJoin {
-    name = "zoom-us-xcb";
-    paths = [ final.zoom-us ];
-    buildInputs = [ final.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/zoom --set QT_QPA_PLATFORM "xcb"
-      wrapProgram $out/bin/zoom-us --set QT_QPA_PLATFORM "xcb"
-      rm -f "$out/share/applications/Zoom.desktop"
-      substitute \
-        "${final.zoom-us}/share/applications/Zoom.desktop" \
-        "$out/share/applications/Zoom.desktop" \
-        --replace "${final.zoom-us}/bin/zoom" "$out/bin/zoom"
-    '';
-  };
 }
