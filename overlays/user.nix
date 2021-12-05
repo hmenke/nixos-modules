@@ -5,7 +5,6 @@ final: prev: {
   nix-prefetch = prev.nix-prefetch.override { nix = final.nixFlakes; };
   nix-update = prev.nix-update.override { nix = final.nixFlakes; };
   nixos-shell = prev.nixos-shell.override { nix = final.nixFlakes; };
-  nixpkgs-review = prev.nixpkgs-review.override { nix = final.nixFlakes; };
   pop-os-shell = final.callPackage ../pkgs/pop-os-shell { };
   softmaker-office-2018-976 = final.softmaker-office.override {
     officeVersion = {
