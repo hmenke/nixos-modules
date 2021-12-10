@@ -1,4 +1,4 @@
-{ buildFHSUserEnv
+{ buildFHSUserEnvBubblewrap
 , buildEnv
 , writeShellScriptBin
 }:
@@ -464,7 +464,7 @@ let
     "yplan"
   ];
 
-  fhs = buildFHSUserEnv {
+  fhs = buildFHSUserEnvBubblewrap {
     name = "texlive-fhs";
     targetPkgs = pkgs: with pkgs; [ fontconfig freetype perl tk wget ];
     runScript = "";
