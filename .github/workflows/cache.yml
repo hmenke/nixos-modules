@@ -1,0 +1,58 @@
+name: "cache"
+on:
+  push:
+  pull_request:
+  schedule:
+  - cron: "0 */2 * * *"
+
+jobs:
+  nix-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - name: nixos-21.11 (Linux)
+          channel: nixos-21.11
+          os: ubuntu-latest
+    name: nix-build
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: cachix/install-nix-action@v16
+      with:
+        extra_nix_config: |
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+    - uses: cachix/cachix-action@v10
+      with:
+        name: hmenke
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+        pushFilter: "(-source$|nixpkgs.tar.gz$)"
+    - name: Use nix-community cache
+      run: |
+        cachix use nix-community
+    - name: Run nix-build
+      run: |
+        rev="$(git ls-remote https://github.com/NixOS/nixpkgs refs/heads/$channel | awk '{print $1}')"
+        nixpkgs="fetchTarball \"https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz\""
+        cat <<'EOF' | nix-build -E - \
+            --keep-going \
+            --show-trace \
+            --option allow-import-from-derivation false \
+            ${channel:+--arg pkgs "import ($nixpkgs) {}"}
+        { pkgs ? import <nixpkgs> { } }:
+        
+        with pkgs.appendOverlays [
+          (import (builtins.fetchTarball {
+            url = "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz";
+          }))
+        ];
+        
+        recurseIntoAttrs {
+          inherit emacsPgtkGcc;
+        }
+        EOF
+      env:
+        NIXPKGS_ALLOW_UNFREE: 1
+        channel: '${{ matrix.channel }}'
