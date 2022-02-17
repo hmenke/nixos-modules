@@ -36,7 +36,11 @@ jobs:
       run: |
         rev="$(git ls-remote https://github.com/NixOS/nixpkgs refs/heads/$channel | awk '{print $1}')"
         nixpkgs="fetchTarball \"https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz\""
-        cat <<'EOF' | nix-build -E - \
+        rev="$(git ls-remote https://github.com/nix-community/emacs-overlay refs/heads/master | awk '{print $1}')"
+        emacs_overlay="fetchTarball \"https://github.com/nix-community/emacs-overlay/archive/$rev.tar.gz\""
+        echo "nixpkgs: $nixpkgs"
+        echo "emacs-overlay: $emacs_overlay"
+        cat <<EOF | nix-build -E - \
             --keep-going \
             --show-trace \
             --option allow-import-from-derivation false \
@@ -44,9 +48,7 @@ jobs:
         { pkgs ? import <nixpkgs> { } }:
         
         with pkgs.appendOverlays [
-          (import (builtins.fetchTarball {
-            url = "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz";
-          }))
+          (import ($emacs_overlay))
         ];
         
         recurseIntoAttrs {
