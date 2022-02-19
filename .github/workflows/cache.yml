@@ -11,8 +11,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - name: nixos-21.11 (Linux)
+        - name: nixos-21.11 (1)
           channel: nixos-21.11
+          id: 1
+          os: ubuntu-latest
+        - name: nixos-21.11 (2)
+          channel: nixos-21.11
+          id: 2
+          os: ubuntu-latest
+        - name: nixos-21.11 (3)
+          channel: nixos-21.11
+          id: 3
           os: ubuntu-latest
     name: nix-build
     runs-on: ${{ matrix.os }}
@@ -34,7 +43,7 @@ jobs:
         cachix use nix-community
     - name: Run nix-build
       run: |
-        rev="$(git ls-remote https://github.com/NixOS/nixpkgs refs/heads/$channel | awk '{print $1}')"
+        rev="$(curl -sSfL https://channels.nix.gsc.io/$channel/history-v2 | tac | awk -v "id=$id" 'NR==id {print $1}')"
         nixpkgs="fetchTarball \"https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz\""
         rev="$(git ls-remote https://github.com/nix-community/emacs-overlay refs/heads/master | awk '{print $1}')"
         emacs_overlay="fetchTarball \"https://github.com/nix-community/emacs-overlay/archive/$rev.tar.gz\""
@@ -58,3 +67,4 @@ jobs:
       env:
         NIXPKGS_ALLOW_UNFREE: 1
         channel: '${{ matrix.channel }}'
+        id: '${{ matrix.id }}'
