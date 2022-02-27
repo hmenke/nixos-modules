@@ -44,27 +44,7 @@ jobs:
     - name: Run nix-build
       run: |
         rev="$(curl -sSfL https://channels.nix.gsc.io/$channel/history-v2 | tac | awk -v "id=$id" 'NR==id {print $1}')"
-        nixpkgs="fetchTarball \"https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz\""
-        rev="$(git ls-remote https://github.com/nix-community/emacs-overlay refs/heads/master | awk '{print $1}')"
-        emacs_overlay="fetchTarball \"https://github.com/nix-community/emacs-overlay/archive/$rev.tar.gz\""
-        echo "nixpkgs: $nixpkgs"
-        echo "emacs-overlay: $emacs_overlay"
-        cat <<EOF | nix-build -E - \
-            --keep-going \
-            --show-trace \
-            --option allow-import-from-derivation false \
-            ${channel:+--arg pkgs "import ($nixpkgs) {}"}
-        { pkgs ? import <nixpkgs> { } }:
-        
-        with pkgs.appendOverlays [
-          (import ($emacs_overlay))
-        ];
-        
-        recurseIntoAttrs {
-          inherit emacsPgtkGcc;
-        }
-        EOF
+        nix flake check -L .github/workflows --override-input nixpkgs "github:NixOS/nixpkgs/$rev"
       env:
-        NIXPKGS_ALLOW_UNFREE: 1
         channel: '${{ matrix.channel }}'
         id: '${{ matrix.id }}'
