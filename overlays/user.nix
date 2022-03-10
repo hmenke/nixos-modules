@@ -1,5 +1,4 @@
 final: prev: {
-  masterpdfeditor-free = final.callPackage ../pkgs/masterpdfeditor-free { };
   mathematica-env = final.callPackage ../pkgs/mathematica-env { };
   nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
   nixos-shell = prev.nixos-shell.override { nix = final.nixFlakes; };
