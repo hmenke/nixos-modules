@@ -11,4 +11,5 @@ final: prev: {
     };
   };
   texlive-env = final.callPackage ../pkgs/texlive-env { };
+  unison-bin = final.callPackage ../pkgs/unison-bin { };
 }
