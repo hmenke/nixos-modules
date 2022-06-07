@@ -12,7 +12,17 @@ let
 
     isExecutable = true;
 
-    inherit (pkgs) python3 sbsigntool;
+    inherit (pkgs) python3;
+
+    sbsigntool = with pkgs; sbsigntool.overrideAttrs ({ patches ? [], ... } : lib.optionalAttrs (lib.versionOlder sbsigntool.version "0.9.2") {
+      patches = patches ++ [
+        (fetchpatch {
+          name = "src-image-c-remove-alignment-of-regions";
+          url = "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git/patch/?id=98d3ce77b4960785c5180277989542bfb90a9666";
+          sha256 = "sha256-BU7piWhjIS2vO+WK46tbtAlujv2tFoll81RVW0AGyk4=";
+        })
+      ];
+    });
 
     binutils = pkgs.binutils-unwrapped;
 
