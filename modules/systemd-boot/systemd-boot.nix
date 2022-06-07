@@ -14,14 +14,16 @@ let
 
     inherit (pkgs) python3;
 
-    sbsigntool = with pkgs; sbsigntool.overrideAttrs ({ patches ? [], ... } : lib.optionalAttrs (lib.versionOlder sbsigntool.version "0.9.2") {
-      patches = patches ++ [
-        (fetchpatch {
-          name = "src-image-c-remove-alignment-of-regions";
-          url = "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git/patch/?id=98d3ce77b4960785c5180277989542bfb90a9666";
-          sha256 = "sha256-BU7piWhjIS2vO+WK46tbtAlujv2tFoll81RVW0AGyk4=";
-        })
-      ];
+    sbsigntool = with pkgs; sbsigntool.overrideAttrs (_: lib.optionalAttrs (lib.versionOlder sbsigntool.version "0.9.4") rec {
+      pname = "sbsigntool";
+      version = "0.9.4";
+      name = "${pname}-${version}";
+      src = fetchgit {
+        url = "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git";
+        rev = "v${version}";
+        sha256 = "sha256-dbjdA+hjII/k7wABTTJV5RBdy4KlNkFlBWEaX4zn5vg=";
+      };
+      patches = [ ./autoconf.patch ];
     });
 
     binutils = pkgs.binutils-unwrapped;
