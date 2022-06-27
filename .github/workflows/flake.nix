@@ -23,6 +23,6 @@
         ];
       };
     in {
-      checks.${system} = { inherit (pkgs) emacsPgtkGcc git-branchless; };
+      checks.${system} = { inherit (pkgs) emacsPgtkGcc; };
   };
 }
