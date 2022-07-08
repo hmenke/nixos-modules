@@ -16,7 +16,7 @@ let
           (map (iface: "wireguard-${iface}.service")
             (attrNames config.networking.wireguard.interfaces));
       in wg-quick ++ wireguard;
-      after = [ "network.target" ];
+      after = [ "network-pre.target" ];
       wantedBy = [ "multi-user.target" ];
       path = [ pkgs.wstunnel ];
       serviceConfig = {
