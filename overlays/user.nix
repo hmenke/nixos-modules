@@ -1,8 +1,5 @@
 final: prev: {
   mathematica-env = final.callPackage ../pkgs/mathematica-env { };
-  nix-direnv = prev.nix-direnv.override { enableFlakes = true; };
-  nixos-shell = prev.nixos-shell.override { nix = final.nixFlakes; };
-  pop-os-shell = final.callPackage ../pkgs/pop-os-shell { };
   softmaker-office-2018-976 = final.softmaker-office.override {
     officeVersion = {
       version = "976";
