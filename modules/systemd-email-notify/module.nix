@@ -21,7 +21,7 @@ let
 
     === Journal of unit "$1" for the current boot ===
 
-    $(${config.systemd.package}/bin/journalctl -b -0 -u "$1")
+    $(${config.systemd.package}/bin/journalctl -b 0 -n 200 -u "$1")
     ERRMAIL
   '';
 
