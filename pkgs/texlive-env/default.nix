@@ -468,6 +468,7 @@ let
     name = "texlive-fhs";
     targetPkgs = pkgs: with pkgs; [ fontconfig freetype perl tk wget ];
     runScript = "";
+    dieWithParent = false;
     profile = ''
       export PATH="/opt/texlive/current/bin/x86_64-linux''${PATH:+:$PATH}"
     '';
