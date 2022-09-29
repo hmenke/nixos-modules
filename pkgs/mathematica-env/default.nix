@@ -31,6 +31,7 @@ let
         libX11
         libXext
       ]);
+      unshareNet = true;
       runScript = "";
       profile = ''
         export PATH="/opt/Wolfram/Mathematica/12.1/Executables''${PATH:+:$PATH}"
@@ -40,22 +41,13 @@ let
       '';
     };
 
-  fhsNoNet = runCommandLocal "mathematica-fhs-no-net" { } ''
-    mkdir -p "$out/bin/"
-    substitute \
-      "${fhs}/bin/mathematica-fhs" \
-      "$out/bin/mathematica-fhs" \
-      --replace "--share-net" "--unshare-net"
-    chmod 555 "$out/bin/mathematica-fhs"
-  '';
-
   makeFhsWrapper = name:
     writeShellScriptBin name ''
-      exec "${fhsNoNet}/bin/mathematica-fhs" "${name}" "$@"
+      exec "${fhs}/bin/mathematica-fhs" "${name}" "$@"
     '';
 
 in
 buildEnv {
   name = "mathematica-env";
-  paths = [ fhsNoNet ] ++ (map makeFhsWrapper executables);
+  paths = [ fhs ] ++ (map makeFhsWrapper executables);
 }
