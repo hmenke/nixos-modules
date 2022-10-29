@@ -26,6 +26,7 @@ let
         alsaLib
         fontconfig
         libGL
+        openjdk11
         zlib
       ] ++ (with xorg; [
         libX11
