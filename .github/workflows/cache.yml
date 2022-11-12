@@ -26,14 +26,14 @@ jobs:
     name: nix-build
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - uses: cachix/install-nix-action@v16
+    - uses: cachix/install-nix-action@v18
       with:
         extra_nix_config: |
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-    - uses: cachix/cachix-action@v10
+    - uses: cachix/cachix-action@v12
       with:
         name: hmenke
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
