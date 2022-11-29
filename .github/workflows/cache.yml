@@ -11,16 +11,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - name: nixos-22.05 (1)
-          channel: nixos-22.05
+        - name: nixos-22.11 (1)
+          channel: nixos-22.11
           id: 1
           os: ubuntu-latest
-        - name: nixos-22.05 (2)
-          channel: nixos-22.05
+        - name: nixos-22.11 (2)
+          channel: nixos-22.11
           id: 2
           os: ubuntu-latest
-        - name: nixos-22.05 (3)
-          channel: nixos-22.05
+        - name: nixos-22.11 (3)
+          channel: nixos-22.11
           id: 3
           os: ubuntu-latest
     name: nix-build
