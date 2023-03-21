@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   pname = "adblock";
-  version = "3.12.2";
+  version = "3.12.15";
 
   src = fetchFromGitHub {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-ZrYN2XIjiL/G37zKvvp50QiFnFqhby8H+d/HwkwaCFY=";
+    sha256 = "sha256-HoNX57lCoIr36B/7HMuazWSWeAPPfWY1oZf6dXnxYIE=";
   };
 
   installPhase = let
