@@ -41,6 +41,8 @@ in {
         [Unit]
         OnFailure=notify-send@%n.service
         EOF
+        mkdir -p $out/etc/systemd/system/notify-send@.service.d/
+        touch $out/etc/systemd/system/notify-send@.service.d/toplevel-override.conf
       '')
     ];
 
