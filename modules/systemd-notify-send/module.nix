@@ -21,13 +21,6 @@ in {
           "User session to which the notification will be sent.";
       };
     };
-
-    systemd.services = mkOption {
-      type = with types;
-        attrsOf (submodule {
-          config.onFailure = optional cfg.enable "notify-send@%n.service";
-        });
-    };
   };
 
   ###### implementation
@@ -38,6 +31,19 @@ in {
       message = "You need to specify a user";
     };
 
+    systemd.packages = [
+      (pkgs.runCommandNoCC "toplevel-override.conf" {
+        preferLocalBuild = true;
+        allowSubstitutes = false;
+      } ''
+        mkdir -p $out/etc/systemd/system/service.d/
+        cat <<-'EOF' > $out/etc/systemd/system/service.d/toplevel-override.conf
+        [Unit]
+        OnFailure=notify-send@%n.service
+        EOF
+      '')
+    ];
+
     systemd.services."notify-send@" = {
       description = "Desktop notification for %i";
       onFailure = lib.mkForce [ ];
@@ -46,7 +52,7 @@ in {
         INSTANCE = "%i";
       };
       script = ''
-        ${pkgs.libnotify}/bin/notify-send --urgency=critical \
+        ${pkgs.libnotify}/bin/notify-send --app-name="$INSTANCE" --urgency=critical \
           "Service '$INSTANCE' failed" \
           "$(journalctl -n 6 -o cat -u $INSTANCE)"
       '';
