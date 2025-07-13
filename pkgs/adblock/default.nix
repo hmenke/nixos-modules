@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation rec {
   pname = "adblock";
-  version = "3.15.27";
+  version = "3.16.2";
 
   src = fetchFromGitHub {
     owner = "StevenBlack";
