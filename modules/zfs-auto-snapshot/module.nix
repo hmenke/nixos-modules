@@ -74,7 +74,7 @@ in {
           after = [ "zfs-import.target" ];
           path = [ pkgs.zfs-auto-snapshot pkgs.zfs ];
           script = ''
-            zfs-auto-snapshot ${cfg.flags} --default-exclude --label=${snapName} --keep=${keep snapName} '//'
+            zfs-auto-snapshot ${cfg.flags} --default-exclude --label=${snapName} --keep=${keep snapName} --post-snapshot=${lib.escapeShellArg ''sh -c 'zfs bookmark "$1@$2" "$1#$2"' --''} '//'
 
             # Prune old snapshots with the same label from all datasets
             zfs list -H -t filesystem,volume -o name | while read -r volume; do
