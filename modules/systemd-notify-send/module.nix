@@ -32,7 +32,7 @@ in {
     };
 
     systemd.packages = [
-      (pkgs.runCommandNoCC "toplevel-override.conf" {
+      (pkgs.runCommand "toplevel-override.conf" {
         preferLocalBuild = true;
         allowSubstitutes = false;
       } ''
